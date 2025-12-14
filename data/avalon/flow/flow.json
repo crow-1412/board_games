@@ -1,0 +1,294 @@
+{
+  "game": "avalon",
+  "schema_version": 1,
+  "start_node": "setup_players",
+  "nodes": {
+    "setup_players": {
+      "stage": "准备",
+      "title": "选择人数（Setup）",
+      "body": "先把关键状态确定下来：玩家人数会决定任务队伍人数表与部分判定。\n\n提示：阿瓦隆通常 5–10 人。",
+      "ui": {
+        "fields": [
+          {
+            "key": "player_count",
+            "label": "玩家人数",
+            "type": "select",
+            "required": true,
+            "options": [
+              {"label": "5", "value": 5},
+              {"label": "6", "value": 6},
+              {"label": "7", "value": 7},
+              {"label": "8", "value": 8},
+              {"label": "9", "value": 9},
+              {"label": "10", "value": 10}
+            ],
+            "help": "选择你们实际参与人数。"
+          },
+          {
+            "key": "role_preset",
+            "label": "角色配置",
+            "type": "select",
+            "required": true,
+            "options": [
+              {"label": "基础常用（含：梅林/派西维尔/刺客/莫甘娜 + 若干忠臣/爪牙）", "value": "standard"}
+            ],
+            "help": "MVP 先按常用配置走，后续支持自定义扩展。"
+          }
+        ]
+      },
+      "actions": [{"id": "next", "label": "下一步"}],
+      "on": {
+        "next": {"to": "setup_roles"}
+      }
+    },
+
+    "setup_roles": {
+      "stage": "准备",
+      "title": "发身份与开局口径",
+      "body": "现在做两件事：\n\n1) 洗混身份并发放，每人只看自己的身份。\n2) 主持人宣布：本局包含刺客，且好人即使 3 次任务成功也不一定立刻获胜。\n\n常见误区：开局就透露自己看到了谁/没看到谁。",
+      "ui": {
+        "fields": [
+          {
+            "key": "identities_dealt",
+            "label": "已发身份并确认所有人看过",
+            "type": "checkbox",
+            "required": true,
+            "help": "建议所有人都点头确认后再进入下一步。"
+          }
+        ]
+      },
+      "actions": [{"id": "next", "label": "继续"}],
+      "on": {
+        "next": {
+          "branches": [
+            {"if": [{"key": "identities_dealt", "op": "eq", "value": true}], "then": "roles_quick_intro"},
+            {"then": "setup_roles"}
+          ]
+        }
+      }
+    },
+
+    "roles_quick_intro": {
+      "stage": "角色",
+      "title": "快速认识关键角色",
+      "body": "你只需要记住“信息链条”：\n\n- 梅林：知道坏人（但不能暴露）。\n- 派西维尔：知道“梅林候选”（通常是梅林/莫甘娜），负责保护真梅林。\n- 坏人：彼此通常互认（具体看版本），目标是让任务失败并在最后刺杀梅林。\n- 刺客：最后一刀猜梅林。\n\n带玩口径：讨论时不要讲规则书，讲‘我为什么信/不信这队’。",
+      "actions": [{"id": "next", "label": "继续"}],
+      "on": {
+        "next": {"to": "night_sequence"}
+      }
+    },
+
+    "night_sequence": {
+      "stage": "角色",
+      "title": "夜晚信息（主持人流程）",
+      "body": "（不同版本主持人口令略有差异，MVP 用最常见口径）\n\n1) 所有人闭眼。\n2) 坏人睁眼互认（梅林不睁眼）。\n3) 梅林睁眼，看到坏人。\n4) 派西维尔睁眼，看到两位‘梅林候选’（梅林/莫甘娜）。\n5) 全体闭眼，进入白天讨论。\n\n常见误区：主持人口令顺序混乱导致信息泄漏。",
+      "ui": {
+        "fields": [
+          {
+            "key": "night_done",
+            "label": "夜晚流程已完成",
+            "type": "checkbox",
+            "required": true
+          }
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入任务阶段"}],
+      "on": {
+        "next": {
+          "branches": [
+            {"if": [{"key": "night_done", "op": "eq", "value": true}], "then": "mission_table"},
+            {"then": "night_sequence"}
+          ]
+        }
+      }
+    },
+
+    "mission_table": {
+      "stage": "任务",
+      "title": "任务队伍人数表与关键判定",
+      "body": "任务一共 5 轮。每轮队长提名队伍人数由玩家人数决定（系统会自动算）。\n\n关键判定：\n- 一般情况下：只要出现 1 张失败牌，任务就失败。\n- 常见规则：当玩家数 ≥7 时，第 4 轮任务需要 2 张失败牌才失败。\n\n接下来我们开始第 1 轮，系统会让你选择当前队长并引导提名/投票/结算。",
+      "actions": [{"id": "start", "label": "开始第1轮"}],
+      "on": {
+        "start": {
+          "set": {"round": 1, "leader": 0, "successes": 0, "failures": 0, "reject_count": 0},
+          "to": "nominate_team"
+        }
+      }
+    },
+
+    "nominate_team": {
+      "stage": "任务",
+      "title": "队长提名队伍",
+      "body": "现在进行本轮：\n\n1) 队长提名若干名玩家组成任务队伍（人数=系统计算的 team_size）。\n2) 给出一句理由（30 秒以内），再开始全体讨论。\n3) 进入投票：通过/否决。\n\n提示：你可以在右侧设置‘当前队长/轮次’，以及填写队伍名单（可选）。",
+      "ui": {
+        "fields": [
+          {"key": "round", "label": "当前轮次(1-5)", "type": "number", "required": true, "min": 1, "max": 5},
+          {"key": "leader", "label": "当前队长(玩家编号 0..N-1)", "type": "number", "required": true, "min": 0, "max": 9},
+          {"key": "reject_count", "label": "本轮累计否决次数(0-4)", "type": "number", "required": true, "min": 0, "max": 4},
+          {"key": "team", "label": "本轮提名队伍(可选)", "type": "text", "required": false, "help": "例如：0,2,4 或 玩家名列表"}
+        ]
+      },
+      "actions": [
+        {"id": "vote_pass", "label": "投票通过"},
+        {"id": "vote_reject", "label": "投票否决"}
+      ],
+      "on": {
+        "vote_pass": {"set": {"reject_count": 0}, "to": "quest_play"},
+        "vote_reject": {
+          "inc": {"reject_count": 1},
+          "to": {
+            "branches": [
+              {"if": [{"key": "reject_count", "op": "gte", "value": 5}], "then": "evil_win_rejects"},
+              {"then": "leader_rotate"}
+            ]
+          }
+        }
+      }
+    },
+
+    "leader_rotate": {
+      "stage": "任务",
+      "title": "队长轮换（被否决后）",
+      "body": "队伍被否决后：\n- 队长顺时针轮换到下一位。\n- 继续由新队长提名队伍并投票。\n\n危险线：若同一轮累计否决达到 5 次，坏人直接获胜（常见规则）。",
+      "actions": [{"id": "next", "label": "轮到下一位队长"}],
+      "on": {
+        "next": {"inc": {"leader": 1}, "to": "nominate_team"}
+      }
+    },
+
+    "quest_play": {
+      "stage": "任务",
+      "title": "执行任务并结算",
+      "body": "队伍通过后：被选中的玩家每人秘密出 1 张牌（成功/失败）。\n\n结算规则（常用）：\n- 通常：出现 ≥1 张失败牌 → 任务失败。\n- 若玩家数 ≥7 且是第 4 轮：需要 ≥2 张失败牌才失败。\n\n你可以在右侧输入本轮出现的失败牌数量，系统会给出结论并推进到下一轮/胜负阶段。",
+      "ui": {
+        "fields": [
+          {"key": "team_size", "label": "本轮队伍人数(自动)", "type": "number", "required": false},
+          {"key": "required_fail_cards", "label": "本轮失败阈值(自动)", "type": "number", "required": false},
+          {"key": "fail_cards", "label": "出现的失败牌数量", "type": "number", "required": true, "min": 0, "max": 5}
+        ]
+      },
+      "actions": [{"id": "resolve_quest", "label": "结算任务"}],
+      "on": {
+        "resolve_quest": {
+          "to": {
+            "branches": [
+              {"if": [{"key": "fail_cards", "op": "gte", "value": {"$ref": "required_fail_cards"}}], "then": "quest_failed"},
+              {"then": "quest_succeeded"}
+            ]
+          }
+        }
+      }
+    },
+
+    "quest_succeeded": {
+      "stage": "任务",
+      "title": "任务成功",
+      "body": "本轮任务成功。\n\n下一步：更新计分、进入下一轮队长提名。",
+      "actions": [{"id": "next", "label": "进入下一轮"}],
+      "on": {
+        "next": {"inc": {"successes": 1}, "set": {"reject_count": 0}, "to": "post_quest_check"}
+      }
+    },
+
+    "quest_failed": {
+      "stage": "任务",
+      "title": "任务失败",
+      "body": "本轮任务失败。\n\n下一步：更新计分、进入下一轮队长提名。",
+      "actions": [{"id": "next", "label": "进入下一轮"}],
+      "on": {
+        "next": {"inc": {"failures": 1}, "set": {"reject_count": 0}, "to": "post_quest_check"}
+      }
+    },
+
+    "post_quest_check": {
+      "stage": "任务",
+      "title": "检查胜负并推进回合",
+      "body": "系统会检查：\n- 好人是否已 3 次任务成功（进入刺客刺杀阶段）\n- 坏人是否已 3 次任务失败（坏人直接获胜）\n- 否则进入下一轮（轮次+1，队长轮换）。",
+      "actions": [{"id": "continue", "label": "继续"}],
+      "on": {
+        "continue": {
+          "to": {
+            "branches": [
+              {"if": [{"key": "failures", "op": "gte", "value": 3}], "then": "evil_win_failures"},
+              {"if": [{"key": "successes", "op": "gte", "value": 3}], "then": "assassin_intro"},
+              {"then": "next_round"}
+            ]
+          }
+        }
+      }
+    },
+
+    "next_round": {
+      "stage": "任务",
+      "title": "进入下一轮",
+      "body": "进入下一轮：\n- 轮次 +1（最多到第 5 轮）\n- 队长轮换到下一位\n\n提示：你可以在右侧修正队长编号（如果你们用的是名字/顺序不同）。",
+      "actions": [{"id": "next", "label": "去提名队伍"}],
+      "on": {
+        "next": {"inc": {"round": 1, "leader": 1}, "to": "nominate_team"}
+      }
+    },
+
+    "assassin_intro": {
+      "stage": "结算",
+      "title": "刺客刺杀阶段（关键）",
+      "body": "好人已完成 3 次任务成功，但还没结束：\n\n- 刺客现在要指出谁是梅林。\n- 如果刺杀命中梅林：坏人获胜。\n- 如果刺杀失败：好人获胜。\n\n带玩提示：让刺客给出‘为何是他’的推理，再亮身份。",
+      "ui": {
+        "fields": [
+          {"key": "assassin_guess", "label": "刺客猜测的梅林是谁(可选)", "type": "text", "required": false},
+          {"key": "hit_merlin", "label": "刺杀是否命中梅林", "type": "checkbox", "required": true}
+        ]
+      },
+      "actions": [{"id": "resolve_assassin", "label": "结算刺杀"}],
+      "on": {
+        "resolve_assassin": {
+          "to": {
+            "branches": [
+              {"if": [{"key": "hit_merlin", "op": "eq", "value": true}], "then": "evil_win_assassin"},
+              {"then": "good_win"}
+            ]
+          }
+        }
+      }
+    },
+
+    "good_win": {
+      "stage": "结束",
+      "title": "好人获胜",
+      "body": "恭喜：刺杀失败，好人获胜。\n\n复盘建议：\n- 梅林哪一步差点暴露？\n- 派西维尔是否有效保护真梅林？\n- 哪次投票最关键？",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {
+        "restart": {"to": "setup_players"}
+      }
+    },
+
+    "evil_win_failures": {
+      "stage": "结束",
+      "title": "坏人获胜（任务失败达成）",
+      "body": "坏人已达成 3 次任务失败，坏人获胜。\n\n复盘建议：\n- 哪一轮的队伍构成最可疑但仍通过？\n- 坏人是如何在讨论中‘推着走’的？",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {
+        "restart": {"to": "setup_players"}
+      }
+    },
+
+    "evil_win_rejects": {
+      "stage": "结束",
+      "title": "坏人获胜（连续否决）",
+      "body": "本轮累计否决达到 5 次（常见规则）：坏人直接获胜。\n\n复盘建议：\n- 好人是否过度‘洁癖’导致无法出队？\n- 是否缺少‘可执行的队伍替代方案’？",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {
+        "restart": {"to": "setup_players"}
+      }
+    },
+
+    "evil_win_assassin": {
+      "stage": "结束",
+      "title": "坏人获胜（刺杀命中）",
+      "body": "刺客刺杀命中梅林：坏人获胜。\n\n复盘建议：\n- 梅林的发言哪里泄露了信息优势？\n- 派西维尔是否有效混淆了坏人视线？",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {
+        "restart": {"to": "setup_players"}
+      }
+    }
+  }
+}

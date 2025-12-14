@@ -1,0 +1,61 @@
+{
+  "game": "werewolf_awakened_witch_12",
+  "schema_version": 1,
+  "start_node": "aw_setup",
+  "nodes": {
+    "aw_setup": {
+      "stage": "准备",
+      "title": "觉醒女巫板：毒药调配（12人）",
+      "body": "这个板子的关键体验是：\n\n- 觉醒女巫的“毒药”可用多次（示例：3次）\n- 每次用毒需要选择 1~3 名“助手”，助手在夜里投票，**必须全票同意**毒药才生效\n\n我们按最小流程把“用毒的博弈”跑起来。",
+      "ui": {
+        "fields": [
+          {"key": "player_count", "label": "玩家人数", "type": "select", "required": true, "options": [{"label": "12", "value": 12}]},
+          {"key": "poison_uses_left", "label": "毒药剩余次数（示例）", "type": "number", "required": true, "min": 0, "max": 3}
+        ]
+      },
+      "actions": [{"id": "start", "label": "开始第1夜"}],
+      "on": {"start": {"to": "aw_night_witch"}}
+    },
+
+    "aw_night_witch": {
+      "stage": "夜晚",
+      "title": "女巫：是否救 / 是否毒（调配机制）",
+      "body": "今晚女巫需要决定：\n- 是否使用解药（按你们局内约定）\n- 是否使用毒药调配\n\n若使用毒药：选择 1~3 个“助手”，并记录他们是否都同意。",
+      "ui": {
+        "fields": [
+          {"key": "witch_save", "label": "女巫是否使用解药", "type": "checkbox", "required": true},
+          {"key": "use_poison", "label": "女巫是否尝试使用毒药调配", "type": "checkbox", "required": true},
+          {"key": "poison_target", "label": "若用毒：目标坐席号", "type": "number", "required": false, "min": 1, "max": 12},
+          {"key": "assistants", "label": "助手（用逗号分隔坐席号，1~3人）", "type": "text", "required": false},
+          {"key": "assistants_all_agree", "label": "助手是否全票同意用毒", "type": "checkbox", "required": true}
+        ]
+      },
+      "actions": [{"id": "resolve", "label": "结算夜晚"}],
+      "on": {"resolve": {"branches": [{"if": [{"key": "use_poison", "op": "eq", "value": true}, {"key": "assistants_all_agree", "op": "eq", "value": true}], "then": "aw_poison_success"}, {"then": "aw_poison_fail_or_skip"}]}}
+    },
+
+    "aw_poison_success": {
+      "stage": "结算",
+      "title": "毒药生效",
+      "body": "结论：助手全票同意，毒药生效（目标出局/倒牌的公开方式按你们局内约定）。\n\n接下来进入白天。",
+      "actions": [{"id": "next", "label": "进入白天"}],
+      "on": {"next": {"inc": {"poison_uses_left": -1}, "to": "aw_day"}}
+    },
+
+    "aw_poison_fail_or_skip": {
+      "stage": "结算",
+      "title": "毒药未生效（未用或未全票）",
+      "body": "结论：\n- 若你未用毒：本夜无毒药效果\n- 若你尝试用毒但未全票：毒药本次不生效\n\n接下来进入白天。",
+      "actions": [{"id": "next", "label": "进入白天"}],
+      "on": {"next": {"to": "aw_day"}}
+    },
+
+    "aw_day": {
+      "stage": "白天",
+      "title": "白天：发言与投票",
+      "body": "白天按常规进行：\n1) 公布昨夜情况\n2) 组织发言\n3) 投票放逐\n\n你可以问我：如何让“助手投毒”环节不拖慢节奏。",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {"restart": {"to": "aw_setup"}}
+    }
+  }
+}

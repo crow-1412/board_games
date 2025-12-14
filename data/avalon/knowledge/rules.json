@@ -1,0 +1,86 @@
+[
+  {
+    "id": "avalon.goal.good_3_success",
+    "title": "好人胜利条件：3 次任务成功",
+    "text": "好人阵营的主要目标是让任务成功累计达到 3 次。但在包含刺客的玩法中，3 次成功后还会进入刺杀阶段，胜利并非立刻确定。",
+    "tags": ["goal", "quest", "score"]
+  },
+  {
+    "id": "avalon.goal.evil_3_fail",
+    "title": "坏人胜利条件：3 次任务失败",
+    "text": "坏人阵营可以通过让任务失败累计达到 3 次直接获胜（无需进入刺杀）。",
+    "tags": ["goal", "quest", "score"]
+  },
+  {
+    "id": "avalon.goal.assassin_phase",
+    "title": "刺杀阶段：刺客猜中梅林则坏人获胜",
+    "text": "当好人达成 3 次任务成功后，刺客有一次机会指出谁是梅林。若刺杀命中梅林，坏人获胜；否则好人获胜。",
+    "tags": ["assassin", "merlin", "goal"]
+  },
+  {
+    "id": "avalon.round.loop",
+    "title": "一轮流程：提名→投票→执行→结算",
+    "text": "常见轮次结构是：队长提名任务队伍 → 全体投票通过/否决 → 若通过则队伍成员秘密出任务牌 → 结算任务结果并轮换队长进入下一轮。",
+    "tags": ["round", "voting", "quest"]
+  },
+  {
+    "id": "avalon.voting.all_vote",
+    "title": "投票：所有玩家同时投票",
+    "text": "队长提出队伍后，全体玩家对该队伍进行同意/反对投票。实践中建议：先短理由、再讨论、再同时亮票。",
+    "tags": ["voting"]
+  },
+  {
+    "id": "avalon.voting.reject_5",
+    "title": "连续否决：累计 5 次否决则坏人获胜",
+    "text": "常见规则：同一轮内如果队伍提名被连续否决达到 5 次，坏人直接获胜（避免游戏陷入无休止否决）。",
+    "tags": ["voting", "reject", "goal"]
+  },
+  {
+    "id": "avalon.quest.fail_threshold_default",
+    "title": "任务失败判定：通常 1 张失败牌即失败",
+    "text": "常见规则：若任务牌中出现至少 1 张失败牌，则该次任务失败。",
+    "tags": ["quest", "ruling"]
+  },
+  {
+    "id": "avalon.quest.fail_threshold_round4",
+    "title": "第 4 轮例外：7+ 人通常需要 2 张失败牌才失败",
+    "text": "常见规则：当玩家人数 ≥7 且进行第 4 轮任务时，需要至少 2 张失败牌，该任务才算失败。",
+    "tags": ["quest", "exception", "ruling"]
+  },
+  {
+    "id": "avalon.quest.cards_secret",
+    "title": "出任务牌：队伍成员秘密出牌",
+    "text": "队伍投票通过后，被选中的队伍成员每人秘密选择一张任务牌（成功/失败）并同时提交，再公开统计结果。",
+    "tags": ["quest"]
+  },
+  {
+    "id": "avalon.role.merlin",
+    "title": "梅林：知道坏人但不能暴露",
+    "text": "梅林拥有信息优势（常见版本中会知道坏人阵营是谁），但需要在讨论中避免暴露，否则刺客更容易命中。",
+    "tags": ["role", "merlin"]
+  },
+  {
+    "id": "avalon.role.percival",
+    "title": "派西维尔：保护梅林",
+    "text": "派西维尔通常会看到两位“梅林候选”（梅林与莫甘娜），其目标是保护真梅林并混淆坏人判断。",
+    "tags": ["role", "percival"]
+  },
+  {
+    "id": "avalon.role.assassin",
+    "title": "刺客：最后刺杀梅林",
+    "text": "刺客在好人达成 3 次任务成功后进行最终刺杀判断。刺客要基于全局讨论与投票推理出梅林。",
+    "tags": ["role", "assassin"]
+  },
+  {
+    "id": "avalon.mistake.overexplain",
+    "title": "常见误区：用规则书压人",
+    "text": "教学/带玩时，尽量避免长段背规则。更有效的做法是：用“下一步要做什么”“为什么这队值得/不值得信”来驱动讨论。",
+    "tags": ["teaching", "mistake"]
+  },
+  {
+    "id": "avalon.mistake.merlin_leak",
+    "title": "常见误区：梅林发言太像梅林",
+    "text": "梅林如果总能精准点名坏人，很容易在刺杀阶段被命中。更稳的策略是：给“范围”和“理由”，并让派西维尔协同保护。",
+    "tags": ["teaching", "mistake", "merlin"]
+  }
+]

@@ -1,0 +1,89 @@
+{
+  "game": "werewolf_awakened_loner_12",
+  "schema_version": 1,
+  "start_node": "lg_setup",
+  "nodes": {
+    "lg_setup": {
+      "stage": "准备",
+      "title": "觉醒孤独少女板：偶像机制（12人）",
+      "body": "这个板子的关键体验是“偶像机制”：\n\n- 首夜：孤独少女选择 1 名玩家作为“偶像”\n- 若偶像被白天公投出局：她会黑化变成狼人加入狼队\n- 若偶像因其他原因出局（被刀/被毒等）：她会继承偶像身份与技能（玩法较复杂，以本局约定为准）\n\n我们先把这条核心分支跑通。",
+      "ui": {
+        "fields": [
+          {"key": "player_count", "label": "玩家人数", "type": "select", "required": true, "options": [{"label": "12", "value": 12}]}
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入首夜"}],
+      "on": {"next": {"to": "lg_pick_idol"}}
+    },
+
+    "lg_pick_idol": {
+      "stage": "夜晚",
+      "title": "首夜：选择偶像",
+      "body": "孤独少女选择 1 名玩家作为“偶像”。这个信息通常只有她自己知道。",
+      "ui": {
+        "fields": [
+          {"key": "idol_seat", "label": "偶像坐席号", "type": "number", "required": true, "min": 1, "max": 12}
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入白天"}],
+      "on": {"next": {"to": "lg_idol_fate"}}
+    },
+
+    "lg_idol_fate": {
+      "stage": "结算",
+      "title": "偶像命运：触发分支",
+      "body": "当偶像出局时，按出局原因触发机制：\n\n- 偶像被公投出局 → 孤独少女黑化变狼人\n- 偶像被刀/被毒等非公投出局 → 孤独少女继承偶像身份与技能（以本局约定为准）\n\n现在请选择：偶像是如何出局的？（如果还没出局，也可以先选择“尚未出局”继续游戏）",
+      "ui": {
+        "fields": [
+          {
+            "key": "idol_death_cause",
+            "label": "偶像出局原因",
+            "type": "select",
+            "required": true,
+            "options": [
+              {"label": "尚未出局", "value": "alive"},
+              {"label": "白天公投出局", "value": "executed"},
+              {"label": "夜晚被狼人击杀", "value": "night_kill"},
+              {"label": "被女巫毒", "value": "poison"},
+              {"label": "其他原因", "value": "other"}
+            ]
+          }
+        ]
+      },
+      "actions": [{"id": "resolve", "label": "结算"}],
+      "on": {
+        "resolve": {
+          "branches": [
+            {"if": [{"key": "idol_death_cause", "op": "eq", "value": "executed"}], "then": "lg_turn_wolf"},
+            {"if": [{"key": "idol_death_cause", "op": "in", "value": ["night_kill", "poison", "other"]}], "then": "lg_inherit"},
+            {"then": "lg_continue"}
+          ]
+        }
+      }
+    },
+
+    "lg_turn_wolf": {
+      "stage": "结算",
+      "title": "黑化：变为狼人",
+      "body": "结论：偶像被公投出局 → 孤独少女黑化，变为狼人阵营，并在后续夜晚参与狼刀（具体细则以本局约定为准）。",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {"restart": {"to": "lg_setup"}}
+    },
+
+    "lg_inherit": {
+      "stage": "结算",
+      "title": "继承：获得偶像身份与技能",
+      "body": "结论：偶像非公投出局 → 孤独少女继承偶像身份与技能。\n\n提示：不同板子对“继承细则”差异很大（是否立刻公开、是否保留原阵营等）。请以本局约定为准。",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {"restart": {"to": "lg_setup"}}
+    },
+
+    "lg_continue": {
+      "stage": "进行中",
+      "title": "偶像尚未出局：继续游戏",
+      "body": "偶像尚未出局：按常规夜晚/白天节奏继续。\n\n你可以在偶像出局时回到这个节点结算分支。",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {"restart": {"to": "lg_setup"}}
+    }
+  }
+}

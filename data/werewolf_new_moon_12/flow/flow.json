@@ -1,0 +1,69 @@
+{
+  "game": "werewolf_new_moon_12",
+  "schema_version": 1,
+  "start_node": "nm_setup",
+  "nodes": {
+    "nm_setup": {
+      "stage": "准备",
+      "title": "12人新月降临：选择板子与开局",
+      "body": "这是一个带“新月事件”的娱乐板子。流程重点：\n\n- 夜晚照常行动（狼人/预言家/女巫/守卫等）\n- **首夜结束、天亮之前**触发一次“新月事件”，会改变当天规则\n\n我们先用最小体验：只把事件和关键结算记录下来。",
+      "ui": {
+        "fields": [
+          {"key": "player_count", "label": "玩家人数", "type": "select", "required": true, "options": [{"label": "12", "value": 12}]},
+          {"key": "role_preset", "label": "板子", "type": "select", "required": true, "options": [{"label": "经典12人（预女猎守 + 若干平民/狼人）", "value": "classic12"}]}
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入首夜"}],
+      "on": {"next": {"set": {"day": 0}, "to": "nm_night"}}
+    },
+
+    "nm_night": {
+      "stage": "夜晚",
+      "title": "首夜：常规夜晚行动（简化记录）",
+      "body": "按你们线下/平台的主持人顺序进行夜晚。\n\n为了体验产品：你只需要记录今晚是否有人被刀/被救/被毒（不用公开细节）。",
+      "ui": {
+        "fields": [
+          {"key": "night_kill", "label": "今晚狼人是否刀到人", "type": "checkbox", "required": true},
+          {"key": "witch_save", "label": "女巫是否救人", "type": "checkbox", "required": true},
+          {"key": "witch_poison", "label": "女巫是否毒人", "type": "checkbox", "required": true}
+        ]
+      },
+      "actions": [{"id": "next", "label": "触发新月事件"}],
+      "on": {"next": {"to": "nm_event"}}
+    },
+
+    "nm_event": {
+      "stage": "新月事件",
+      "title": "新月事件：抽取并执行",
+      "body": "现在随机触发 1 个新月事件（你可以按实体卡/APP抽取，或随机数决定）。\n\n事件会改变“今天”的规则。请选择你抽到的事件：",
+      "ui": {
+        "fields": [
+          {
+            "key": "new_moon_event",
+            "label": "新月事件",
+            "type": "select",
+            "required": true,
+            "options": [
+              {"label": "禁言日：今天白天禁止公开跳身份（娱乐规则）", "value": "silence_day"},
+              {"label": "技能失效：今天所有神职技能暂时失效（仅当天）", "value": "no_skills_day"},
+              {"label": "双票日：每位玩家白天投票算2票", "value": "double_vote"},
+              {"label": "公开验人：预言家验人结果可在今天公开（仅当天）", "value": "seer_public"},
+              {"label": "平安偏移：今天被放逐的人仍可留遗言（节奏更慢）", "value": "last_words_allowed"}
+            ],
+            "help": "不同平台事件略有差异，你也可以用最接近的一项。"
+          }
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入白天"}],
+      "on": {"next": {"to": "nm_day"}}
+    },
+
+    "nm_day": {
+      "stage": "白天",
+      "title": "天亮：公布结果 + 发言 + 投票",
+      "body": "请按新月事件调整今天规则，然后走正常白天：\n\n1) 公布昨夜结果（可能平安夜）\n2) 组织发言（控时）\n3) 投票放逐 1 人\n\n你可以随时问我：在当前事件下，主持人怎么控流程更顺。",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {"restart": {"to": "nm_setup"}}
+    }
+  }
+}

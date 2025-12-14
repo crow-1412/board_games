@@ -1,0 +1,5 @@
+[
+  {"id":"aw.witch.poison_uses","title":"觉醒女巫：毒药可使用多次（示例3次）","text":"本板常见机制：觉醒女巫的毒药不是一次性，整局可多次使用（次数以本局板子设定为准）。","tags":["witch","night"]},
+  {"id":"aw.witch.assistants_unanimous","title":"毒药调配：助手必须全票同意才生效","text":"每次用毒时，女巫选择1~3名助手。夜晚助手投票决定是否毒死目标，只有当所有助手都同意时，毒药才生效；只要有1人反对就不生效。","tags":["witch","night","ruling"]},
+  {"id":"ww.phase.night_day","title":"基本节奏：夜晚→白天发言→投票","text":"狼人杀典型节奏为：夜晚行动 → 白天公布结果与发言 → 投票放逐。","tags":["phase"]}
+]

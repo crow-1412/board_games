@@ -1,0 +1,5 @@
+[
+  {"id":"nm.core.event_timing","title":"新月事件触发时机","text":"新月事件在首夜结束、天亮之前触发，并对当天白天规则产生影响（具体效果以本局事件为准）。","tags":["event","timing"]},
+  {"id":"ww.phase.night_day","title":"基本节奏：夜晚→白天发言→投票","text":"狼人杀典型节奏为：夜晚行动 → 白天公布结果与发言 → 投票放逐。","tags":["phase"]},
+  {"id":"nm.guardrail.house_rules","title":"护栏：事件效果以本局为准","text":"不同平台/卡牌的事件细则可能不同；裁定时优先以本局事件卡文字/主持人约定为准。","tags":["guardrail"]}
+]

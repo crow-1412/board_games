@@ -1,0 +1,5 @@
+[
+  {"id":"lg.idol.pick","title":"首夜：选择偶像","text":"觉醒孤独少女在首夜选择一名玩家作为偶像，后续围绕偶像的出局方式触发不同分支效果。","tags":["loner","night"]},
+  {"id":"lg.branch.executed_turn_wolf","title":"偶像被公投：黑化变狼人","text":"若偶像被白天公投出局，觉醒孤独少女黑化变为狼人并加入狼队（细则以本局板子为准）。","tags":["loner","ruling"]},
+  {"id":"lg.branch.other_inherit","title":"偶像非公投出局：继承身份技能","text":"若偶像因夜晚击杀/毒等非公投原因出局，觉醒孤独少女继承偶像身份与技能（继承细则以本局板子为准）。","tags":["loner","ruling"]}
+]

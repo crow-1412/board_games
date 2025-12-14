@@ -1,0 +1,77 @@
+{
+  "game": "werewolf_awakened_guard_12",
+  "schema_version": 1,
+  "start_node": "ag_setup",
+  "nodes": {
+    "ag_setup": {
+      "stage": "准备",
+      "title": "月坠光渊：觉醒守卫板（12人）",
+      "body": "这个板子的关键体验是：\n\n- 守卫夜晚守护\n- **觉醒守卫还能在白天“免疫放逐”保护目标**（触发后直接进入黑夜、无遗言）\n\n我们按“能跑通带玩与判定”的最小流程走。",
+      "ui": {
+        "fields": [
+          {"key": "player_count", "label": "玩家人数", "type": "select", "required": true, "options": [{"label": "12", "value": 12}]},
+          {"key": "role_preset", "label": "板子", "type": "select", "required": true, "options": [{"label": "觉醒守卫板（示例）", "value": "awakened_guard"}]}
+        ]
+      },
+      "actions": [{"id": "start", "label": "开始第1夜"}],
+      "on": {"start": {"set": {"day": 0, "awakened_guard_day_block_used": false}, "to": "ag_night_guard"}}
+    },
+
+    "ag_night_guard": {
+      "stage": "夜晚",
+      "title": "守卫：选择守护目标",
+      "body": "守卫选择今晚守护的玩家（坐席号）。\n\n提示：若你们有“不能连续守同一人”的约定，请按约定执行。",
+      "ui": {
+        "fields": [
+          {"key": "guard_target", "label": "今晚守护的玩家（坐席号）", "type": "number", "required": true, "min": 1, "max": 12}
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入白天"}],
+      "on": {"next": {"to": "ag_day_vote"}}
+    },
+
+    "ag_day_vote": {
+      "stage": "白天",
+      "title": "白天投票：是否触发“免疫放逐”",
+      "body": "白天进行发言与投票放逐。\n\n觉醒守卫机制（本板亮点）：\n- 如果**被放逐的人**恰好是你夜晚守护的目标，且本局开启“免疫放逐”，则该玩家**不出局**。\n- 触发后显示为“平安日/放逐无效”，**无遗言**，直接进入黑夜。\n\n请记录：今天被放逐的是谁。",
+      "ui": {
+        "fields": [
+          {"key": "executed_seat", "label": "今天被放逐的玩家（坐席号）", "type": "number", "required": true, "min": 1, "max": 12},
+          {"key": "awakened_guard_day_immunity_enabled", "label": "本局是否启用“守护免疫放逐”规则", "type": "checkbox", "required": true}
+        ]
+      },
+      "actions": [{"id": "resolve", "label": "结算白天"}],
+      "on": {
+        "resolve": {
+          "branches": [
+            {
+              "if": [
+                {"key": "awakened_guard_day_immunity_enabled", "op": "eq", "value": true},
+                {"key": "awakened_guard_day_block_used", "op": "eq", "value": false},
+                {"key": "executed_seat", "op": "eq", "value": {"$ref": "guard_target"}}
+              ],
+              "then": "ag_day_blocked"
+            },
+            {"then": "ag_day_normal"}
+          ]
+        }
+      }
+    },
+
+    "ag_day_blocked": {
+      "stage": "结算",
+      "title": "触发：免疫放逐（平安日）",
+      "body": "结论：放逐无效，目标不出局。\n\n按板子口径：\n- 无遗言\n- 直接进入黑夜\n\n提示：这个强机制会显著改变白天节奏。",
+      "actions": [{"id": "next", "label": "进入下一夜"}],
+      "on": {"next": {"set": {"awakened_guard_day_block_used": true}, "inc": {"day": 1}, "to": "ag_night_guard"}}
+    },
+
+    "ag_day_normal": {
+      "stage": "结算",
+      "title": "未触发：正常放逐",
+      "body": "结论：按常规规则处理放逐（遗言/公布身份等按你们局内约定）。\n\n接下来进入下一夜。",
+      "actions": [{"id": "next", "label": "进入下一夜"}],
+      "on": {"next": {"inc": {"day": 1}, "to": "ag_night_guard"}}
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "game": "werewolf_dark_night_star_12",
+  "schema_version": 1,
+  "start_node": "dns_setup",
+  "nodes": {
+    "dns_setup": {
+      "stage": "准备",
+      "title": "暗夜星辰：觉醒角色体验板（12人）",
+      "body": "这个板子的目的：体验“觉醒角色带来的更强反制与爆发”。\n\n包含：\n- 觉醒狼美人（强化魅惑/封锁）\n- 觉醒猎人（强化反杀/保命）\n\n注意：不同平台对觉醒技能细节会微调。本原型会以“局内约定”为准，把流程与裁定做得可执行。",
+      "ui": {
+        "fields": [
+          {"key": "player_count", "label": "玩家人数", "type": "select", "required": true, "options": [{"label": "12", "value": 12}]},
+          {"key": "rule_note", "label": "本局觉醒技能约定（可选）", "type": "text", "required": false, "help": "例如：觉醒狼美人能否无视守护/能否同时魅惑两人等"}
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入夜晚"}],
+      "on": {"next": {"set": {"day": 0}, "to": "dns_night"}}
+    },
+
+    "dns_night": {
+      "stage": "夜晚",
+      "title": "夜晚行动（聚焦觉醒互动）",
+      "body": "为了测试产品是否好用，我们只记录与觉醒角色强相关的信息：\n\n- 觉醒狼美人是否魅惑了目标（可能导致目标白天/夜晚受限制）\n- 觉醒猎人是否触发了“反杀/保命”条件（按你们约定）\n\n你可以把今晚的关键动作填一下，白天我会帮你梳理该怎么宣布与推进。",
+      "ui": {
+        "fields": [
+          {"key": "aw_wolf_beauty_used", "label": "觉醒狼美人今晚是否发动技能", "type": "checkbox", "required": true},
+          {"key": "aw_wolf_beauty_target", "label": "若发动：目标坐席号", "type": "number", "required": false, "min": 1, "max": 12},
+          {"key": "aw_hunter_trigger", "label": "觉醒猎人是否触发特殊状态（按约定）", "type": "checkbox", "required": true}
+        ]
+      },
+      "actions": [{"id": "next", "label": "进入白天"}],
+      "on": {"next": {"to": "dns_day"}}
+    },
+
+    "dns_day": {
+      "stage": "白天",
+      "title": "白天：如何宣布与控节奏",
+      "body": "白天你需要做三件事：\n\n1) 公布昨夜结果（倒牌/平安夜等按约定）\n2) 组织发言（提醒玩家：觉醒技能可能改变常规推理方式）\n3) 投票放逐\n\n你可以直接问我：在当前觉醒互动下，主持人该怎么宣布才不引发争议。",
+      "actions": [{"id": "restart", "label": "重新开始"}],
+      "on": {"restart": {"to": "dns_setup"}}
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# env
+.env
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+
+# Node
+node_modules/
+.next/
+
+# Logs
+*.log
+
+# SQLite
+*.db
+*.db-journal
